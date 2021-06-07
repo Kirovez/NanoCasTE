@@ -1,0 +1,51 @@
+#mapping
+configfile: "configfile.yaml"
+
+rule mm2_map_reads:
+    input:
+        genome_fasta = config["genome_fasta"],
+        fastq = "data/{sample}.fastq"
+    conda:
+        'environment.yaml'
+    output:
+        "mapped_reads/sorted_{sample}.bam"
+    threads:
+        150
+    message:
+        "Executing minimap2 and bam sorting with {threads} threads on the following files {input}."
+    log:
+        "logs/{sample}.log"
+    shell:
+        "minimap2 -ax map-ont -t {threads} {input.genome_fasta} {input.fastq} | samtools view -b -T {input.genome_fasta} - | samtools view -Sb - | bamtools sort -in - -out {output}"
+
+rule bamtools_index:
+    input:
+        rules.mm2_map_reads.output
+    output:
+        "mapped_reads/sorted_{sample}.bam.bai"
+    conda:
+        "environment.yaml"
+    message:
+        "Creating index for {input}"
+    shell:
+        "bamtools index -in {input} | samtools index -c {input}"
+
+
+rule NanoCasTE_run:
+    input:
+        fastq = "data/{sample}.fastq",
+        sort_bam = rules.mm2_map_reads.output,
+        target = config['target'],
+        bai = rules.bamtools_index.output
+    params:
+        guides = config['guides'],
+        mrl = config['min_read_length'],
+        map_q = config['mapping_quality'],
+        min_len_clipped = config['min_len_clipped']
+
+    output:
+        "{sample}.nct"
+    conda:
+        "environment.yaml"
+    shell:
+        "python3 NanoCasTE.py -mrl {params.mrl} -q {params.map_q} -mlc {params.min_len_clipped} {input.sort_bam} {input.fastq} {input.target} '{params.guides}' {output}"

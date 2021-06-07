@@ -1,0 +1,7 @@
+target: data/evd.fasta
+guides: 'TCTTGGTGATGAGAGTGAC,ACCCTGGATTTAAGGTGAGA,AGTTTAAGAGCTCTAGTATG,CTACAAGGTCAATCGAAAGG,TCAACACATGAAAGTCCCGA'
+genome_fasta: data/GCF_000001735.4_TAIR10.1_genomic.fna
+min_len_clipped: 0.9
+mapping_quality: 40
+min_read_length: 750
+long_clipped_report: 4000
