@@ -334,10 +334,10 @@ if __name__ == "__main__":
 
     parser.add_argument('-mrl', '--min_read_length', help='minimum read length', default=750, type=int)
     parser.add_argument('-q', '--map_q', help='minimum mapping quality', default=60,type=int)
-    parser.add_argument('-mlc', '--min_len_clipped', help='minimum coverage of clipped part', default=0.6,type=float)
+    parser.add_argument('-mlc', '--min_cov_clipped', help='minimum coverage of clipped part', default=0.6,type=float)
     parser.add_argument('-mlcr', '--long_clipped_report', help='minimum length of the clipped part to report', default=5000,type=float)
 
     args = parser.parse_args()
     guides = [seq for seq in args.guides.split(",")]
     main(args.sorted_bam, args.reads, args.target_fasta, guides, args.outBed,
-         mapping_quality=args.map_q, min_clipped_part_coverage=args.min_len_clipped,min_read_length=args.min_read_length, long_clipped_report = args.long_clipped_report)
+         mapping_quality=args.map_q, min_clipped_part_coverage=args.min_cov_clipped,min_read_length=args.min_read_length, long_clipped_report = args.long_clipped_report)
